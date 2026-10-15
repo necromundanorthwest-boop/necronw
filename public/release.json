@@ -1,8 +1,8 @@
 {
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "stage": "alpha",
   "appVersion": "3.3.1",
   "scenarioVersion": "1.1.0",
-  "release": "Start Here / Community",
-  "releaseDate": "2026-10-09"
+  "release": "Dead Signal Event Play / GitHub candidate",
+  "releaseDate": "2026-10-15"
 }

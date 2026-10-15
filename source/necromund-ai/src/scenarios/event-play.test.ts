@@ -1,0 +1,23 @@
+import {describe,it,expect} from 'vitest';
+import {seedBattle} from '../data/seed';
+import {readBattle,SAVE_KEY} from '../data/storage';
+import {initializeScenario,beginPlayer,reportTerror} from './runtime';
+import {deadSignal} from './dead-signal';
+import {nextOperation} from './event-play';
+const init=()=>initializeScenario(structuredClone(seedBattle),deadSignal,['Explorer 01','Explorer 02'],'South','automatic',()=>0);
+describe('Event Play presentation and safe load',()=>{
+ it('shows setup without changing a current battle',()=>{const b=structuredClone(seedBattle),before=JSON.stringify(b);expect(nextOperation(b).target).toBe('event-scenario');expect(JSON.stringify(b)).toBe(before)});
+ it('prioritizes terminal outcome over activation instructions',()=>{const b=init();b.scenario!.stage='FAILED';expect(nextOperation(b).title).toBe('Expedition complete')});
+ it('asks for Priority without consuming an opportunity',()=>{const b=init();expect(nextOperation(b).title).toContain('Priority');expect(b.opportunity).toBeUndefined()});
+ it('directs pending arrivals into the existing End Phase',()=>{const b=init();b.phase='END';b.scenario!.queue.push(b.scenario!.reserve.pop()!);expect(nextOperation(b)).toMatchObject({title:'Confirm queued deployments',target:'event-end',incomplete:true})});
+ it('distinguishes unprocessed and processed End Phases',()=>{const b=init();b.phase='END';expect(nextOperation(b).title).toContain('checks');b.scenario!.lastEndRound=b.round;expect(nextOperation(b).title).toContain('Priority')});
+ it('resumes an active AI before offering another fighter',()=>{const b=init();b.phase='ACTION';b.opportunity='AI';b.fighters[0].readiness='ACTIVATING';expect(nextOperation(b)).toMatchObject({target:'event-ai',incomplete:true});expect(nextOperation(b).title).toContain(b.fighters[0].name)});
+ it('resumes player Terror and action recording separately',()=>{let b=init();b.phase='ACTION';b.opportunity='OPPONENT';b=beginPlayer(b,b.scenario!.crew[0].id);expect(nextOperation(b).detail).toContain('Nerve');b=reportTerror(b,false);expect(nextOperation(b).detail).toContain('2 normal actions')});
+ it('shows condition recovery after a failed nerve check',()=>{let b=init();b.phase='ACTION';b.opportunity='OPPONENT';b=reportTerror(beginPlayer(b,b.scenario!.crew[0].id),true,'fail');expect(nextOperation(b).detail).toContain('condition')});
+ it('offers player selection and AI pass without mutation',()=>{const b=init();b.phase='ACTION';b.opportunity='OPPONENT';expect(nextOperation(b).title).toContain('explorer');b.opportunity='AI';b.fighters.forEach(f=>f.readiness='ACTIVATED');expect(nextOperation(b).title).toContain('Pass');expect(b.opportunity).toBe('AI')});
+ it('never derives the next instruction from hidden relay contents',()=>{const a=init(),b=structuredClone(a);b.scenario!.hidden.liveRelay='beta';expect(nextOperation(a)).toEqual(nextOperation(b))});
+ it('loads a valid saved expedition with its original battle intact',()=>{const b=init();const result=readBattle({getItem:k=>k===SAVE_KEY?JSON.stringify(b):null});expect(result.error).toBeUndefined();expect(result.battle).toEqual(b)});
+ it.each(['{broken','null','{"schemaVersion":99,"fighters":[]}','{"schemaVersion":3,"fighters":[]}'])('preserves unreadable raw input %s',raw=>{const r=readBattle({getItem:()=>raw});expect(r.error).toBeTruthy();expect(r.raw).toBe(raw)});
+ it('reports unavailable browser storage without writing anything',()=>{expect(readBattle({getItem:()=>{throw Error('blocked')}}).error).toBeTruthy()});
+ it('starts the sample only when there is no saved value',()=>{expect(readBattle({getItem:()=>null})).toEqual({battle:structuredClone(seedBattle)})});
+});

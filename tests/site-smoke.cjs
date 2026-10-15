@@ -18,7 +18,7 @@ const report={routes:[],widths:[320,375,768,1280],checks:[],errors:[]};
   console.log('Starting packaged site tests');
   console.log('Testing public routes; cached upgrades have a separate upgrade-smoke.cjs test.');
   console.log('Service worker checks complete; testing routes');
-  const routes=['/#/','/#/solo','/#/blog','/#/resources','/#/gallery','/#/dice','/#/scenarios','/#/scenarios/dead-signal','/#/scenarios/the-hunt','/#/ai'];
+  const routes=['/#/','/#/solo','/#/start-here','/#/blog','/#/resources','/#/gallery','/#/dice','/#/scenarios','/#/scenarios/dead-signal','/#/scenarios/the-hunt','/#/ai'];
   for(const width of report.widths){
    await page.setViewportSize({width,height:900});
    for(const route of routes){await page.goto(base+route);await page.locator('h1').waitFor();await page.evaluate(()=>document.fonts.ready);await noOverflow(width+' '+route);if(width===1280)report.routes.push(route)}
@@ -57,7 +57,7 @@ const report={routes:[],widths:[320,375,768,1280],checks:[],errors:[]};
   for(let i=0;i<6;i++)await page.getByRole('button',{name:'Out of Action / removed',exact:true}).first().click();assert.equal((await saved()).scenario.result.outcome,'defeat');await page.getByRole('heading',{name:'DEFEAT',exact:true}).waitFor();await page.getByRole('button',{name:'Reset Scenario / Restore Previous Battle',exact:true}).click();
   await page.getByRole('button',{name:'Initialize Dead Signal',exact:true}).click();await page.evaluate(()=>{const b=JSON.parse(localStorage.getItem('n2-necromund-ai-v03'));b.round=7;b.scenario.round=7;b.phase='ACTION';b.priority='AI';b.opportunity='AI';localStorage.setItem('n2-necromund-ai-v03',JSON.stringify(b))});await page.reload();await page.getByRole('button',{name:'Enter End Phase',exact:true}).click();for(const check of ['Bottle checks / crew condition rules','Recovery and other normal End Phase rules','Objective and tabletop event checks'])await page.getByRole('checkbox',{name:check,exact:true}).check();await page.getByRole('button',{name:'Process Scenario End Phase',exact:true}).click();assert.equal((await saved()).scenario.result.outcome,'defeat');assert.equal((await saved()).round,7);
   report.checks.push('Browser defeat on all crew removed; round-seven timeout from saved-game fixture');
-  const release=await (await context.request.get(base+'/release.json')).json();assert.equal(release.version,'1.0.0-alpha.4');
+  const release=await (await context.request.get(base+'/release.json')).json();assert.equal(release.version,JSON.parse(fs.readFileSync(path.join(site,'release.json'))).version);
   assert.deepEqual(report.errors,[]);await browser.close();browser=null;
   console.log('Defeat paths passed; starting full scenario playthrough');
   // Supplied complete scenario playthrough, now against the ZIP-extracted integrated build.

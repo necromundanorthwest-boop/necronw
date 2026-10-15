@@ -41,7 +41,7 @@ function render(){
  const raw=location.hash==='#main'?'':location.hash.replace(/^#\/?/,'');
  const [routePath,query='']=raw.split('?');const [route='',id]=routePath.split('/');const params=new URLSearchParams(query);
  const requested=params.get('scenario');
- if(route==='ai'&&requested===deadSignalId){location.replace('/apps/necromund-ai/#/ai?scenario='+encodeURIComponent(requested));return;}
+ if(route==='ai'&&requested===deadSignalId){location.replace('/apps/necromund-ai/#/ai?scenario='+encodeURIComponent(requested)+(new URLSearchParams(location.hash.split('?')[1]||'').get('event')==='1'?'&event=1':''));return;}
  const article=route==='blog'&&id?articles.find(a=>a.id===id):null;
  const routeTitles={'start-here':'Start Here',dice:'Dice Roller',solo:'Solo Play',blog:'Field Notes',gallery:'Photo Gallery',resources:'Resources'};
  document.title=`${article?.title||routeTitles[route]||'Get models on the table.'} — Necromunda Northwest`;

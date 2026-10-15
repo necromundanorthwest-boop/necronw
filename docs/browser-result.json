@@ -4,17 +4,17 @@
   "outcome": "victory",
   "roundsPlayed": 2,
   "relaysSearched": 2,
-  "liveRelay": "beta",
+  "liveRelay": "alpha",
   "maxAlert": 2,
   "shardStatus": "EXTRACTED",
   "shardExtracted": true,
-  "carrier": "67efc38a-792f-4e2c-94a9-6a72d8126f16-player-2",
-  "finalCarrier": "67efc38a-792f-4e2c-94a9-6a72d8126f16-player-2",
+  "carrier": "7993e5bd-18a2-48d4-911d-da10e7fd4707-player-2",
+  "finalCarrier": "7993e5bd-18a2-48d4-911d-da10e7fd4707-player-2",
   "fightersRemaining": 6,
   "achievements": [
     "CLEAN EXTRACTION",
     "ARCHIVE SWEEP"
   ],
-  "timestamp": "2026-09-30T23:19:05.176Z",
+  "timestamp": "2026-10-15T06:58:00.291Z",
   "reason": "Data Shard extracted."
 }

@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "widths": [
+    390,
+    768,
+    1280
+  ],
+  "checks": [
+    "Event option forwarded; two-relay setup",
+    "Handoff does not mutate saved state",
+    "Player activation survives reload and records normal action cost",
+    "AI activation survives interrupted advice; explicit recovery guidance; Resolve/Continue records action and cost",
+    "Public briefing navigation preserves active save",
+    "Cached app reloads offline with same battle",
+    "Unreadable raw save retained without automatic overwrite"
+  ],
+  "physicalTablet": false
+}

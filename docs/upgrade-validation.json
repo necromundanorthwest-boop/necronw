@@ -1,10 +1,10 @@
 {
   "passed": true,
   "checks": [
-    "Alpha3 cached app upgraded after replacement service-worker controller activated",
+    "Baseline cached app upgraded after replacement service-worker controller activated",
     "Existing modified fighter survived upgrade",
     "In-document scenario launch selected setup",
-    "Scenario reset restored prior alpha3 battle",
+    "Scenario reset restored prior baseline battle",
     "Unrelated localStorage retained",
     "Service-worker scope confined to /apps/necromund-ai/"
   ]
