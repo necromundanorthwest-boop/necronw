@@ -18,7 +18,7 @@ git switch feature/dead-signal-event-ux
 
 The prior delivery archive's Git bundle retains the original local history. GitHub import commits have different commit IDs because the connection required a repository initialization commit; their imported source trees were verified identical. Do not force-push the old bundle over GitHub history. Use the live repository and branch going forward.
 
-Repository features: source and packaged site, regression/browser tests, AGENTS.md, contribution instructions, bug report template and release handoff. GitHub Actions checks run on pushes and pull requests. Pages publication is manual, so source upload does not replace the live site. No blanket reuse license has been added for third-party references, photographs or other assets.
+Repository features: source and packaged site, regression/browser tests, AGENTS.md, contribution instructions, bug report template and release handoff. GitHub Actions checks run on pushes and pull requests. Pages publication runs on main pushes or manual dispatch, so source upload does not replace the live site. No blanket reuse license has been added for third-party references, photographs or other assets.
 
 ## Move hosting after candidate review
 

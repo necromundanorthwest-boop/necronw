@@ -64,7 +64,7 @@ Imported commit mapping (source trees verified identical): local baseline `2576c
 
 GitHub-hosted CI has passed installation, unit tests and build; browser tests were still running when this status update was prepared. Check the PR's latest run before release. The app connection lacks Pages/DNS administration actions, and a plugin search found no Cloudflare connection. Configure Settings → Pages → GitHub Actions and the necronw.org custom domain before hosting cutover; follow docs/GITHUB_HOSTING.md. No other game repository was modified.
 
-The Pages workflow runs on manual dispatch, not automatically on source upload. It packages only `public/` and requires Pages to report canonical base URL `https://necronw.org`. This site uses root-absolute paths and should not be switched to a `/necronw/` project URL without a separate path migration. Retaining HTTPS necronw.org and the nested app path preserves the storage origin. Test the actual expedition after DNS cutover.
+The Pages workflow now runs on main pushes or manual dispatch, after the user authorized release. Feature-branch upload alone does not publish. It packages only `public/` and requires Pages to report canonical base URL `https://necronw.org`. This site uses root-absolute paths and should not be switched to a `/necronw/` project URL without a separate path migration. Retaining HTTPS necronw.org and the nested app path preserves the storage origin. Test the actual expedition after DNS cutover.
 
 ## Next session
 
