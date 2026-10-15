@@ -1,0 +1,42 @@
+name: Publish to GitHub Pages
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci
+        working-directory: source/necromund-ai
+      - run: npm test
+        working-directory: source/necromund-ai
+      - run: node scripts/build-site.mjs
+      - uses: actions/configure-pages@v5
+        id: pages
+      - name: Verify the canonical domain is configured
+        env:
+          BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: test "${BASE_URL%/}" = "https://necronw.org"
+      - run: npm install --prefix /tmp/browser-tests playwright@1.62.1
+      - run: /tmp/browser-tests/node_modules/.bin/playwright install --with-deps chromium
+      - run: node tests/site-smoke.cjs && node tests/event-play-smoke.cjs
+        env:
+          CODEX_PRIMARY_RUNTIME_NODE_MODULES: /tmp/browser-tests/node_modules
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+      - uses: actions/deploy-pages@v4
+        id: deployment
