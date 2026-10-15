@@ -1,48 +1,54 @@
-# Necromunda Northwest — Start Here / alpha.5
+# Necromunda Northwest
 
-Complete replacement website package for the existing Cloudflare Worker `splashpage`.
+Public website and NECROMUND:AI tabletop companion. Current working branch: `feature/dead-signal-event-ux`. Website candidate: `1.0.0-alpha.6`; app rules: `3.3.1`; Dead Signal: `1.1.0`.
 
-This release adds the approved Start Here design as a permanent page at `/#/start-here` and below the homepage hero. It updates all NecroNW Discord links to `https://discord.gg/qf9KP3KVk`. Blog posts, Resources, photos, dice tools, NECROMUND:AI 3.3.1 and Dead Signal are preserved.
+Start with [the release handoff](docs/EVENT_RELEASE_HANDOFF.md). Stage B implements Event Play; production remains unchanged until hosting is configured and a release is published. Source and hosting are intended for a dedicated public GitHub repository. See [GitHub hosting and migration](docs/GITHUB_HOSTING.md).
 
-## Deploy from a Mac
+## Local work
 
-1. Extract this ZIP into a new folder. Keep the previous release for rollback.
-2. Open Terminal and type `bash` followed by a space. Do not press Return yet.
-3. Drag **DEPLOY.command** from the extracted folder into Terminal, then press Return.
-
-The script finds its own folder and runs Wrangler with the correct configuration. Terminal does not need to start inside the website folder. Complete Cloudflare login if Wrangler requests it. The script publishes to the existing `splashpage` Worker.
-
-Alternatively, from the folder containing `wrangler.json`:
+Requires Node 24 and npm. Install the companion dependencies:
 
 ```sh
-npx wrangler@4 deploy --config wrangler.json
+cd source/necromund-ai
+npm ci
+npm test
+cd ../..
+node scripts/build-site.mjs
+node scripts/serve.mjs
 ```
 
-Only `public/` is uploaded. No production build or manual file merge is needed.
+Open http://localhost:4173/#/solo. Event Play: http://localhost:4173/#/ai?scenario=secundus-dead-signal&event=1.
 
-## Verify after deployment
+Builds package the companion under `public/apps/necromund-ai/`. The existing shell stylesheet and older hashed assets are retained. The site needs no backend.
 
-- Open `https://splashpage.necromundanorthwest.workers.dev/release.json` and confirm `1.0.0-alpha.5`.
-- Open `https://splashpage.necromundanorthwest.workers.dev/#/start-here`.
-- Check the configured custom domain, `https://necronw.org/#/start-here`, separately; this package does not change domain routing.
-- Check Start Here in the navigation and below the homepage hero.
-- Expand “Not sure what to post?” and follow the Discord invitation.
-- On a phone, check the navigation, gang-building article, solo-play link, and dice roller.
+## Browser verification
 
-If the custom domain still shows an older release while the Worker has alpha.5, check which deployment serves that domain. Do not clear saved app data to update website content.
+Install Playwright and its Chromium browser in a separate directory, or use the GitHub Actions check. Set `CODEX_PRIMARY_RUNTIME_NODE_MODULES` to that directory's `node_modules` when Playwright is not locally resolvable. `BROWSER_EXECUTABLE` can select an installed Chromium executable.
 
-## Editing
+```sh
+node tests/site-smoke.cjs
+node tests/event-play-smoke.cjs
+```
 
-- `public/start-here.js`: shared Start Here content and the NecroNW Discord URL used by Resources.
-- `public/index.html`: site navigation and footer; update the footer invite too if its code changes later.
-- `public/styles.css`: layout and responsive rules.
-- `public/app.js`: page routing and homepage placement.
-- `public/release.json`: release identification.
+The site suite also runs the complete scenario browser playthrough. To test a real cache upgrade, extract the baseline public tree separately and use:
 
-## Validation and supporting files
+```sh
+BASELINE_ROOT=/absolute/path/to/baseline/public node tests/upgrade-smoke.cjs
+```
 
-See `START_HERE_RELEASE_NOTES.md` for this release's checks and limits. Existing Secundus reports and screenshots describe alpha.4; they are retained as historical material and are not evidence of fresh browser tests for alpha.5.
+## Source map
 
-The `source/necromund-ai/` directory remains editable app source. This release does not change application logic or saved-data formats.
+- `public/`: deployable site, content, photos, tools and app assets.
+- `source/necromund-ai/`: React/TypeScript source and rule tests.
+- `tests/`: browser regression tests.
+- `docs/`: release authority, validation reports and historical specifications.
+- `.github/`: checks, manual Pages publication and bug report template.
+- `wrangler.json`: retained Cloudflare rollback configuration.
 
-This ZIP has been prepared for deployment. No live Cloudflare deployment was performed during its preparation.
+[Contributing](CONTRIBUTING.md) describes issue reports and pull requests. [AGENTS.md](AGENTS.md) guides future Work sessions. The original alpha.5 deployment README is preserved in `docs/ALPHA5_README.md`; older reports/screenshots describe their historical release, not this candidate.
+
+## Tabletop use and saves
+
+This is an unofficial tabletop companion. Players measure, confirm legality, roll and resolve effects using their legitimate references. Browser state stays with the current HTTPS origin and browser. Preserve `necronw.org` and the app path during migration. Do not clear site data to fix cached assets. Generated AI advice and Undo history do not survive refresh; use the recovery instructions before continuing an interrupted physical action.
+
+The public source is available for review and contributions. No blanket license is asserted for third-party rules, documents, photographs or other assets.

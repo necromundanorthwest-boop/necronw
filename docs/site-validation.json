@@ -2,6 +2,7 @@
   "routes": [
     "/#/",
     "/#/solo",
+    "/#/start-here",
     "/#/blog",
     "/#/resources",
     "/#/gallery",
