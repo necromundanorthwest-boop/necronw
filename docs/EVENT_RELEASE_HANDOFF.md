@@ -1,6 +1,6 @@
 # Dead Signal Event Play — Stage B handoff
 
-Prepared 15 October 2026 UTC / 14 October Pacific. Status: implemented and locally verified candidate; source uploaded to GitHub with draft PR #1; no Pages activation, DNS change or production deployment has occurred.
+Prepared 15 October 2026 UTC / 14 October Pacific. Status: implemented and locally verified candidate; PR #1 merged and alpha.6 successfully published to GitHub Pages; necronw.org still serves alpha.5 through Cloudflare, so the canonical-domain cutover is incomplete.
 
 ## Authority and version
 
@@ -75,3 +75,13 @@ The Pages workflow now runs on main pushes or manual dispatch, after the user au
 5. Keep the previous Worker and alpha.5 archive for rollback. Asset/DNS rollback never reverses physical actions or local mission progress.
 
 Rollback and cutover details: `docs/GITHUB_HOSTING.md`. The original alpha.5 instructions remain in `docs/ALPHA5_README.md`. Never treat result JSON as a restorable battle backup.
+
+## Stage C execution record — 15 October 2026 UTC
+
+The user explicitly authorized execution of the merge and Pages publication. PR #1 merged as `2abb6eef1e90b4c085fe1940b323b7972a4a54a7`. The first deployment (run 38700046610) failed because the initial guard expected an HTTPS base URL while Pages advertised HTTP during certificate setup. PR #2 corrected the guard to validate the exact necronw.org domain with either advertised scheme; four shell cases passed. The fix merged as `22a798fcb0eef265b06888252c6a5dd90226126f`.
+
+Successful Pages deployment: https://github.com/necromundanorthwest-boop/necronw/actions/runs/38700314085. Companion/site CI also passed: run 38700314067. Both run source tests, build and browser suites before publication. Pages artifact ID: 11956181603. Pages now deploys main pushes, retaining manual dispatch. Code, scenario rules, storage key and HTTPS links remain unchanged.
+
+Post-publication public verification: HTTPS necronw.org/release.json returned 200 from Cloudflare with alpha.5, not the published alpha.6. Public DNS A records returned 104.21.32.78 and 172.67.184.105; authoritative nameservers are jean.ns.cloudflare.com and wells.ns.cloudflare.com. GitHub project URL responds with a redirect to http://necronw.org/release.json while custom-domain HTTPS is pending. Do not use that HTTP origin for the convention save.
+
+Remaining: inspect Cloudflare DNS and Worker custom-domain/route bindings, direct necronw.org to Pages, wait for the GitHub certificate, enable Enforce HTTPS and verify alpha.6 at the canonical HTTPS origin. Keep the old Worker for rollback. No Cloudflare account change was made in this session. Actual event-tablet sleep/wake and unfamiliar-participant handoff tests remain pending.
