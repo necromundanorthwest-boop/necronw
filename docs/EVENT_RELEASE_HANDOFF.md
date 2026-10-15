@@ -1,6 +1,6 @@
 # Dead Signal Event Play — Stage B handoff
 
-Prepared 15 October 2026 UTC / 14 October Pacific. Status: implemented and locally verified candidate; no remote repository upload, Pages activation, DNS change or production deployment has occurred.
+Prepared 15 October 2026 UTC / 14 October Pacific. Status: implemented and locally verified candidate; source uploaded to GitHub with draft PR #1; no Pages activation, DNS change or production deployment has occurred.
 
 ## Authority and version
 
@@ -58,14 +58,18 @@ The candidate is suitable for review and a tablet rehearsal. It is not signed of
 
 ## Repository and hosting status
 
-No accessible site repository exists in the connected account. The user selected a dedicated repository. Suggested target: `necromundanorthwest-boop/necronw`; that URL is proposed, not created. Existing accessible repositories are separate games and were not modified. The connector lacks repository-creation and Pages/DNS administration tools. Next required account action: create an empty public repository and share/grant its URL. See `docs/GITHUB_HOSTING.md` for exact source-upload, Pages and domain steps.
+Public repository: https://github.com/necromundanorthwest-boop/necronw. Review PR: https://github.com/necromundanorthwest-boop/necronw/pull/1. The user granted access and source upload succeeded.
+
+Imported commit mapping (source trees verified identical): local baseline `2576c04` → GitHub `8c9fd62f05c80c619aa1298c973943ef40cf3154`; local implementation `fc20792` → GitHub `895d3fa3e51b0b9de681ed01f3f0c2d729b1ba74`; local documentation/candidate `09ff8ea` → GitHub `688e7816028c071985b36a3b8c53a357e0a8534b`. Later commits update repository status. The connector required a bootstrap parent, so remote commit IDs differ while the imported trees remain exact. Future sessions should clone the GitHub branch rather than force-pushing the old local bundle.
+
+GitHub-hosted CI has passed installation, unit tests and build; browser tests were still running when this status update was prepared. Check the PR's latest run before release. The app connection lacks Pages/DNS administration actions, and a plugin search found no Cloudflare connection. Configure Settings → Pages → GitHub Actions and the necronw.org custom domain before hosting cutover; follow docs/GITHUB_HOSTING.md. No other game repository was modified.
 
 The Pages workflow runs on manual dispatch, not automatically on source upload. It packages only `public/` and requires Pages to report canonical base URL `https://necronw.org`. This site uses root-absolute paths and should not be switched to a `/necronw/` project URL without a separate path migration. Retaining HTTPS necronw.org and the nested app path preserves the storage origin. Test the actual expedition after DNS cutover.
 
 ## Next session
 
 1. Recover this repository from the bundle, read this document and check branch/HEAD.
-2. Upload both baseline and candidate branches to the created GitHub repository; open a review PR and inspect CI results.
+2. Inspect PR #1 and the latest GitHub CI results; baseline and candidate branches are already uploaded.
 3. Complete the intended-tablet visual/touch/sleep/wake checks and a second-person handoff trial. Record failures honestly; use assisted operation if needed.
 4. Configure Pages/custom domain, record existing DNS/Worker bindings, deploy the reviewed artifact and verify the live custom-domain paths and saved expedition. Do not clear site data.
 5. Keep the previous Worker and alpha.5 archive for rollback. Asset/DNS rollback never reverses physical actions or local mission progress.

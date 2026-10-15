@@ -1,25 +1,24 @@
 # GitHub source and hosting migration
 
-Target: a dedicated public repository, suggested name `necronw`, under `necromundanorthwest-boop`. The repository has not yet been created or uploaded. The connected GitHub tools can write existing repositories but do not expose repository creation or Pages/DNS administration. No GitHub credentials were available through a local CLI. No remote URL is asserted to exist.
+Repository: https://github.com/necromundanorthwest-boop/necronw (public). Source upload is complete. The connected GitHub app can write this repository; Pages configuration and DNS administration are not exposed through its available tools. No Pages activation, domain change or production deployment has occurred.
 
-## Publish the source first
+## Source and review
 
-Create an empty public repository at https://github.com/new, with no initial README, license or gitignore. Share its URL with the Work session and grant the GitHub connection access. This permits an existing-repository upload without mixing the site into one of the game repositories.
+- `main` preserves the exact supplied alpha.5 tree: GitHub commit `8c9fd62f05c80c619aa1298c973943ef40cf3154`.
+- `feature/dead-signal-event-ux` contains the Stage B candidate, source, assets and workflows.
+- Review: https://github.com/necromundanorthwest-boop/necronw/pull/1.
 
-The delivery archive includes `necronw-history.bundle`. To recover the exact branches and commits locally:
+Clone the public repository for future work:
 
 ```sh
-git clone necronw-history.bundle necronw
+git clone https://github.com/necromundanorthwest-boop/necronw.git
 cd necronw
 git switch feature/dead-signal-event-ux
-git remote remove origin
-git remote add origin https://github.com/necromundanorthwest-boop/necronw.git
-git push origin main feature/dead-signal-event-ux
 ```
 
-Substitute the actual created repository URL if named differently. The bundle contains an untouched alpha.5 baseline on `main` and the Stage B candidate on the feature branch. Open a pull request from the feature branch. GitHub Actions checks run on push and pull requests. Pages is manual, so uploading source does not itself replace the live site. If pushing through a local terminal, GitHub will use that user's normal Git authentication; never put tokens in remote URLs or commit files.
+The prior delivery archive's Git bundle retains the original local history. GitHub import commits have different commit IDs because the connection required a repository initialization commit; their imported source trees were verified identical. Do not force-push the old bundle over GitHub history. Use the live repository and branch going forward.
 
-Repository features prepared: source and packaged site, regression/browser tests, AGENTS.md, contribution instructions, bug report template and release handoff. Enable Issues; use pull requests for changes. No blanket reuse license has been added for third-party references, photographs or other assets.
+Repository features: source and packaged site, regression/browser tests, AGENTS.md, contribution instructions, bug report template and release handoff. GitHub Actions checks run on pushes and pull requests. Pages publication is manual, so source upload does not replace the live site. No blanket reuse license has been added for third-party references, photographs or other assets.
 
 ## Move hosting after candidate review
 
