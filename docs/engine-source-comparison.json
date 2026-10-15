@@ -1,0 +1,32 @@
+{
+  "unchangedSourceFiles": [
+    "src/main.tsx",
+    "src/vite-env.d.ts",
+    "src/types.ts",
+    "src/App.tsx",
+    "src/styles.css",
+    "src/components/FighterCard.tsx",
+    "src/components/FighterEditor.tsx",
+    "src/components/TacticalForm.tsx",
+    "src/components/ActionResult.tsx",
+    "src/components/Segmented.tsx",
+    "src/scenarios/runtime.test.ts",
+    "src/scenarios/runtime.ts",
+    "src/scenarios/types.ts",
+    "src/scenarios/dead-signal-v1.ts",
+    "src/scenarios/dead-signal.ts",
+    "src/data/coreRules.ts",
+    "src/data/seed.ts",
+    "src/data/migrate.ts",
+    "src/engine/resolver.ts",
+    "src/engine/activation.ts",
+    "src/engine/state.ts",
+    "src/engine/resolver.test.ts"
+  ],
+  "integrationChanges": [
+    "index.html: NecroNW navigation, title and robots metadata",
+    "public/necronw-shell.css: host navigation styling",
+    "src/scenarios/ScenarioPanel.tsx: hashchange/popstate listeners update requested setup selection; no battle mutation"
+  ],
+  "coreMechanicsChanged": false
+}

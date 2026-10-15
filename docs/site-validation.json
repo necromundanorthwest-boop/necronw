@@ -1,0 +1,29 @@
+{
+  "routes": [
+    "/#/",
+    "/#/solo",
+    "/#/blog",
+    "/#/resources",
+    "/#/gallery",
+    "/#/dice",
+    "/#/scenarios",
+    "/#/scenarios/dead-signal",
+    "/#/scenarios/the-hunt",
+    "/#/ai"
+  ],
+  "widths": [
+    320,
+    375,
+    768,
+    1280
+  ],
+  "checks": [
+    "Six blog entries with four full articles, 13 resources, seven decoded photos/lightbox and both dice rollers",
+    "Solo quick-start dialog; library search; two-relay brief; direct refresh; back and forward",
+    "Outer scenario-aware route preselects setup, seven-player crew, existing scenario resumes, Reset restores prior battle, Quick Play variable roster/tactical decision/Undo/sample reset",
+    "Browser defeat on all crew removed; round-seven timeout from saved-game fixture",
+    "Supplied v3.3.1 complete scenario browser playthrough on packaged /apps/necromund-ai/"
+  ],
+  "errors": [],
+  "passed": true
+}

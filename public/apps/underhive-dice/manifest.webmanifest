@@ -1,0 +1,18 @@
+{
+  "name": "Underhive Dice",
+  "short_name": "UH Dice",
+  "description": "Standalone special-dice roller for tabletop skirmish play.",
+  "start_url": "/apps/underhive-dice/",
+  "display": "standalone",
+  "background_color": "#0d0e0f",
+  "theme_color": "#121314",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "id": "/apps/underhive-dice/",
+  "scope": "/apps/underhive-dice/"
+}

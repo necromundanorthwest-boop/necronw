@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "runner": "Vitest 5.0.0",
+  "testFiles": 2,
+  "tests": 51,
+  "source": "supplied v3.3.1 tests",
+  "ranAfterCompatibilityFix": true
+}

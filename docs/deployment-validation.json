@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "tool": "Wrangler",
+  "version": "4.145.0",
+  "command": "npx --yes wrangler@4 deploy --config wrangler.json --dry-run",
+  "testedDirectory": "ZIP-extracted work/package-check",
+  "exitCode": 0,
+  "deploymentPerformed": false
+}

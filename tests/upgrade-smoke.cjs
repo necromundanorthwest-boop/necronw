@@ -1,0 +1,20 @@
+const {chromium}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright');
+const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
+const project=path.resolve(__dirname,'..'),site=path.resolve(process.env.TEST_SITE_ROOT||path.join(project,'public'));
+let root=path.resolve(process.env.BASELINE_ROOT);const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.webmanifest':'application/manifest+json','.svg':'image/svg+xml'};
+const server=http.createServer((req,res)=>{try{let f=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(f!==root&&!f.startsWith(root+path.sep))throw Error();if(fs.statSync(f).isDirectory())f=path.join(f,'index.html');res.writeHead(200,{'Content-Type':mime[path.extname(f)]||'text/plain','Cache-Control':'no-cache'});res.end(fs.readFileSync(f))}catch{res.writeHead(404);res.end()}});
+(async()=>{let browser;try{
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
+ browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE,args:['--no-sandbox','--disable-gpu','--disable-software-rasterizer','--no-zygote','--single-process','--disable-dev-shm-usage']});
+ const context=await browser.newContext(),page=await context.newPage();page.on('dialog',d=>d.accept());
+ await page.goto(base+'/apps/necromund-ai/');await page.locator('.fighter-card').first().waitFor();await page.waitForFunction(async()=>!!(await navigator.serviceWorker.getRegistration())?.active,null,{timeout:15000});await page.reload();await page.locator('.fighter-card').first().waitFor();
+ await page.evaluate(()=>{let b=JSON.parse(localStorage.getItem('n2-necromund-ai-v03'));b.fighters[0].name='Keep this alpha3 fighter';localStorage.setItem('n2-necromund-ai-v03',JSON.stringify(b));localStorage.setItem('unrelated-test-state','retain-me')});
+ root=site;
+ // Observe the replacement controller before reading the updated page. An early reload can still use the old active worker.
+ await page.evaluate(()=>new Promise(async(resolve,reject)=>{const timer=setTimeout(()=>reject(Error('No updated service-worker controller')),20000);navigator.serviceWorker.addEventListener('controllerchange',()=>{clearTimeout(timer);resolve(true)},{once:true});try{const r=await navigator.serviceWorker.getRegistration();await r.update()}catch(e){clearTimeout(timer);reject(e)}})).catch(e=>{if(!e.message.includes('Execution context was destroyed'))throw e});
+ await page.reload();await page.getByRole('heading',{name:'NECROMUND:AI V3.3.1',exact:true}).waitFor({timeout:15000});
+ const saved=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('n2-necromund-ai-v03')));assert.equal((await saved()).fighters[0].name,'Keep this alpha3 fighter');
+ await page.goto(base+'/apps/necromund-ai/#/ai?scenario=secundus-dead-signal');await page.getByRole('button',{name:'Initialize Dead Signal',exact:true}).click();assert.equal((await saved()).scenario.version,'1.1.0');await page.getByRole('button',{name:'Reset Scenario / Restore Previous Battle',exact:true}).click();assert.equal((await saved()).fighters[0].name,'Keep this alpha3 fighter');assert.equal(await page.evaluate(()=>localStorage.getItem('unrelated-test-state')),'retain-me');
+ const scopes=await page.evaluate(async()=>(await navigator.serviceWorker.getRegistrations()).map(r=>new URL(r.scope).pathname));assert.deepEqual(scopes,['/apps/necromund-ai/']);
+ const report={passed:true,checks:['Alpha3 cached app upgraded after replacement service-worker controller activated','Existing modified fighter survived upgrade','In-document scenario launch selected setup','Scenario reset restored prior alpha3 battle','Unrelated localStorage retained','Service-worker scope confined to /apps/necromund-ai/']};fs.writeFileSync(path.join(project,'docs/upgrade-validation.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+ }finally{await browser?.close();server.close()}})().catch(e=>{console.error(e);process.exitCode=1});

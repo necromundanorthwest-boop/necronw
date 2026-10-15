@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#121314">
+  <meta name="description" content="Standalone special-dice roller for tabletop skirmish play.">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Underhive Dice</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23121314'/%3E%3Cpath d='M17 17h30v30H17z' fill='none' stroke='%23e9ff46' stroke-width='4'/%3E%3Ccircle cx='25' cy='25' r='3' fill='%23e9ff46'/%3E%3Ccircle cx='39' cy='32' r='3' fill='%23e9ff46'/%3E%3Ccircle cx='25' cy='39' r='3' fill='%23e9ff46'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body><nav class="nwn-app-nav" aria-label="Necromunda Northwest"><a href="/#/">↖ Necromunda Northwest</a><a href="/#/solo">Solo Play</a><a href="/#/dice">Dice Roller</a></nav>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">STANDALONE TABLETOP UTILITY</p>
+      <h1>UNDERHIVE <span>DICE</span></h1>
+    </div>
+    <button class="icon-button" id="history-toggle" aria-expanded="false" aria-controls="history-panel">HISTORY <b id="history-count">0</b></button>
+  </header>
+
+  <main>
+    <section class="selector" aria-labelledby="dice-heading">
+      <div class="section-heading">
+        <div><span>01</span><h2 id="dice-heading">CHOOSE DIE</h2></div>
+        <p id="die-description">Direction or direct hit</p>
+      </div>
+      <div class="dice-grid" id="dice-grid"></div>
+    </section>
+
+    <section class="roll-workbench" aria-label="Roll controls and results">
+      <div class="control-strip">
+        <div class="quantity">
+          <label>QUANTITY</label>
+          <div class="quantity-buttons" id="quantity-buttons" role="group" aria-label="Number of dice"></div>
+        </div>
+        <button class="roll-button" id="roll-button"><span>ROLL</span><small id="roll-caption">1 SCATTER DIE</small></button>
+      </div>
+
+      <p class="scatter-help">Align your screen with the table before rolling. 0° points up; angles turn clockwise. Hit results show an arrow when a rule requires a direction.</p>
+      <div class="results-shell" id="results-shell">
+        <div class="empty-state" id="empty-state">
+          <span class="empty-mark" aria-hidden="true">⌁</span>
+          <p>READY TO ROLL</p>
+          <small>Select a die and tap roll.</small>
+        </div>
+        <div class="summary" id="summary" hidden></div>
+        <div class="results-grid" id="results-grid" aria-live="polite"></div>
+        <div class="result-actions" id="result-actions" hidden>
+          <button id="reroll-button">↻ REROLL</button>
+          <button id="clear-button">CLEAR</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="history-panel" id="history-panel" hidden>
+      <div class="section-heading">
+        <div><span>02</span><h2>RECENT ROLLS</h2></div>
+        <button id="clear-history">CLEAR HISTORY</button>
+      </div>
+      <ol id="history-list"></ol>
+      <p class="history-empty" id="history-empty">No rolls yet.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>UNOFFICIAL FAN-MADE GAMEPLAY AID</p><p><a href="/resources/underhive-dice-guide.docx" download>Download user guide</a></p>
+    <p>Results only—resolve outcomes using the current rules.</p>
+  </footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

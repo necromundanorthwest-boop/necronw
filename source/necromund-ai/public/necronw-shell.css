@@ -1,0 +1,5 @@
+/* NecroNW host navigation; app mechanics and layout remain in the supplied build. */
+.nwn-app-nav{box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;gap:4px 20px;padding:12px max(16px,calc((100vw - 1080px)/2));background:#eeece4;border-bottom:3px solid #bf4327;color:#242923;font:600 13px/1.4 Arial,sans-serif}
+.nwn-app-nav a{box-sizing:border-box;min-height:44px;display:inline-flex;align-items:center;color:inherit;text-decoration:none;padding:7px 0}
+.nwn-app-nav a:hover{text-decoration:underline}.nwn-app-nav a:focus-visible{outline:3px solid #bf4327;outline-offset:3px}.nwn-app-nav .nwn-brand{font-weight:800;margin-right:auto}
+@media(max-width:560px){.nwn-app-nav{gap:0 16px;padding:8px 16px}.nwn-app-nav .nwn-brand{flex-basis:100%}.nwn-app-nav a{font-size:12px}}

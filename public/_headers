@@ -1,0 +1,11 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Cache-Control: no-cache
+  X-Robots-Tag: noindex, nofollow
+
+/assets/gallery/*
+  Cache-Control: public, max-age=86400
+
+/apps/necromund-ai/assets/*
+  Cache-Control: public, max-age=31536000, immutable

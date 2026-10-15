@@ -1,0 +1,26 @@
+import {describe,expect,it} from 'vitest';
+import {resolveAction,resolveBehaviour} from './resolver';
+import {applyAction,beginActivation,endActivation,nextRound,opponentComplete,recordPriority} from './state';
+import {migrateBattle} from '../data/migrate';
+import {createFighter,defaultTactical,seedBattle} from '../data/seed';
+import {chooseNext} from './activation';
+const legal=(...ids:any[])=>({...defaultTactical,legalActions:ids});
+describe('Version 3 rules engine',()=>{
+ it('records Priority then begins Action Phase',()=>expect(recordPriority(seedBattle,'OPPONENT')).toMatchObject({phase:'ACTION',priority:'OPPONENT',opportunity:'OPPONENT'}));
+ it('keeps opportunity separate from Priority',()=>expect(opponentComplete(recordPriority(seedBattle,'OPPONENT'))).toMatchObject({priority:'OPPONENT',opportunity:'AI'}));
+ it('marks a fighter Activating immediately',()=>expect(beginActivation(recordPriority(seedBattle,'AI'),'gor').fighters[0].readiness).toBe('ACTIVATING'));
+ it('ends an ordinary activation with opponent opportunity',()=>{const b=endActivation(beginActivation(recordPriority(seedBattle,'AI'),'gor'),'gor');expect(b.opportunity).toBe('OPPONENT');expect(b.fighters[0].readiness).toBe('ACTIVATED')});
+ it('begins next round in Priority Phase',()=>expect(nextRound({...seedBattle,phase:'END'})).toMatchObject({round:2,phase:'PRIORITY'}));
+ it('prioritizes status actions',()=>expect(resolveAction({...seedBattle.fighters[0],status:'SERIOUSLY_INJURED_DAMAGED'},legal('CRAWL','MOVE'),seedBattle).action).toBe('CRAWL'));
+ it('marks Charge as Double',()=>expect(resolveAction(seedBattle.fighters[0],legal('CHARGE'),seedBattle)).toMatchObject({action:'CHARGE',actionType:'DOUBLE',normalActionCost:2}));
+ it('grants core Free Fight after Charge',()=>expect(applyAction(seedBattle.fighters[0],resolveAction(seedBattle.fighters[0],legal('CHARGE'),seedBattle)).freeOpportunity?.source).toBe('CORE_CHARGE_FIGHT'));
+ it('blocks an ordinary repeated Shoot',()=>expect(resolveAction({...seedBattle.fighters[1],actionHistory:['SHOOT']},legal('SHOOT','MOVE'),seedBattle).action).toBe('MOVE'));
+ it('allows repeat Shoot with confirmed Fast Shot',()=>{const f={...seedBattle.fighters[1],actionHistory:['SHOOT' as const],exceptions:['FAST_SHOT' as const]};expect(resolveAction(f,{...legal('SHOOT'),exceptionTrigger:'FAST_SHOT'},seedBattle).action).toBe('SHOOT')});
+ it('uses weapon-specific Out of Ammo',()=>{const f={...seedBattle.fighters[1],weapons:[{...seedBattle.fighters[1].weapons[0],outOfAmmo:true}]};expect(resolveAction(f,{...legal('SHOOT','RELOAD'),selectedWeaponId:f.weapons[0].id},seedBattle).action).toBe('RELOAD')});
+ it('requires Heavy for Braced Shot',()=>expect(resolveAction(seedBattle.fighters[1],legal('BRACED_SHOT','MOVE'),seedBattle).action).toBe('MOVE'));
+ it('grants Assault only after Dash',()=>{const f={...seedBattle.fighters[1],weapons:[{...seedBattle.fighters[1].weapons[0],traits:['ASSAULT' as const]}]};expect(applyAction(f,resolveAction(f,legal('DASH'),seedBattle),f.weapons[0].id).freeOpportunity?.source).toBe('ASSAULT')});
+ it('uses weapon roles for Adaptive',()=>expect(resolveBehaviour({...seedBattle.fighters[2],weapons:[{...seedBattle.fighters[2].weapons[0],role:'RANGED'}]},defaultTactical).behaviour).toBe('MARKSMAN'));
+ it('migrates V2 conservatively',()=>{const b=migrateBattle({schemaVersion:2,fighters:[{id:'x',name:'X',weaponRoles:['VERSATILE'],ruleHooks:['REPEAT_SHOOT']}]});expect(b.fighters[0].migrationNotes?.length).toBeGreaterThan(0);expect((b.fighters[0] as any).ruleHooks).toBeUndefined()});
+ it('creates a complete new fighter profile',()=>expect(createFighter('new-id')).toMatchObject({id:'new-id',name:'New Fighter',readiness:'READY',normalActionsRemaining:2,weapons:[{id:'new-id-weapon'}]}));
+ it('supports an empty roster without a recommendation',()=>expect(chooseNext([])).toBeUndefined());
+});
