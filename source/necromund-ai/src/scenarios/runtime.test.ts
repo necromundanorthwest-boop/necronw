@@ -4,7 +4,7 @@ import {resolveAction} from '../engine/resolver';
 import {migrateBattle} from '../data/migrate';
 import {deadSignal} from './dead-signal';
 import {deadSignalV1} from './dead-signal-v1';
-import {advanceScenarioRound,beginPlayer,changeCounter,deployQueued,dropArtifact,finishPlayer,initializeScenario,processScenarioEnd,recordMalstrainOutOfAction,publicScenario,reportTerror,resetScenario,resolvePlayerCondition,resolveWithScenario,scenarioAction,updatePlayer} from './runtime';
+import {applyVanSaarCrew,advanceScenarioRound,beginPlayer,changeCounter,deployQueued,dropArtifact,finishPlayer,initializeScenario,processScenarioEnd,recordMalstrainOutOfAction,publicScenario,reportTerror,resetScenario,resolvePlayerCondition,resolveWithScenario,scenarioAction,updatePlayer} from './runtime';
 import type {BattleState} from '../types';
 const init=(mode:'automatic'|'table'='automatic')=>initializeScenario(structuredClone(seedBattle),deadSignal,['A','B','C','D','E','F'],'South',mode,()=>0);
 function player(b:BattleState,id=b.scenario!.crew.find(p=>p.inPlay&&p.readiness==='READY')!.id){return reportTerror(beginPlayer({...b,phase:'ACTION',opportunity:'OPPONENT'},id),false)}
@@ -47,4 +47,19 @@ describe('Reusable scenario runtime / Dead Signal',()=>{
  it('a casualty after wave processing waits for a future wave; saves retain reserve refill',()=>{let b=end(init());b=recordMalstrainOutOfAction(b,'scum-1');const restored=migrateBattle(JSON.parse(JSON.stringify(b)));expect(restored.scenario!.casualties!['scum-1']).toBe(1);expect(processScenarioEnd(restored)).toEqual(restored);expect(restored.scenario!.queue.map(a=>a.id)).toEqual(['scum-5']);expect(restored.scenario!.reserve.some(a=>a.id==='scum-1')).toBe(true)});
  it('legacy saved scenarios keep their three relays and finite reserve rules',()=>{let b=initializeScenario(seedBattle,deadSignalV1,['A'],'South','automatic',()=>0);expect(Object.keys(b.scenario!.objectives)).toHaveLength(3);b=player(b);expect(scenarioAction(b,'search',b.scenario!.activePlayerId!,true,'gamma').scenario!.objectives.gamma).toBe('RESOLVED');expect(()=>recordMalstrainOutOfAction(b,'scum-1')).toThrow()});
 
+});
+
+it('assigns Van Saar profiles while retaining active crew progress across save and reload',()=>{
+ let b=player(init()); const before=structuredClone(b.scenario!); b=applyVanSaarCrew(b);
+ expect(b.scenario!.crew.map(p=>p.name)).toEqual(['Prime','Archeotek','Augmek','Bioteknist','Gunntek','Teknomat']);
+ expect(b.scenario!.crew.map(p=>p.profileId)).toEqual(b.scenario!.crew.map(p=>p.name));
+ expect(b.scenario!.activePlayerId).toBe(before.activePlayerId);
+ b.scenario!.crew.forEach((p,i)=>expect({...p,name:before.crew[i].name,spyrer:before.crew[i].spyrer,profileId:undefined}).toEqual({...before.crew[i],profileId:undefined}));
+ expect(migrateBattle(JSON.parse(JSON.stringify(b))).scenario!.crew).toEqual(b.scenario!.crew);
+ expect(()=>applyVanSaarCrew(initializeScenario(seedBattle,deadSignal,['A'],'South'))).toThrow(/six/);
+});
+it('links the supplied Van Saar crew at initialization',()=>{
+ const names=['Prime','Archeotek','Augmek','Bioteknist','Gunntek','Teknomat'];
+ const b=initializeScenario(seedBattle,deadSignal,names,'South');
+ expect(b.scenario!.crew.map(p=>p.profileId)).toEqual(names);
 });

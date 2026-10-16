@@ -1,3 +1,4 @@
+import {playerProfiles} from './player-profiles';
 import {generateLoadout, type NpoLoadout} from './npo-loadouts';
 import {createFighter} from '../data/seed';
 import type {BattleState, DecisionResult, Fighter, ResolvedBehaviour, TacticalState} from '../types';
@@ -15,8 +16,17 @@ export function initializeScenario(b:BattleState,d:ScenarioDefinition,crewNames:
  const runId=crypto.randomUUID();const original=clone(b);delete original.scenario;
  const s:ScenarioRuntime={schemaVersion:1,id:d.id,version:d.version,runId,stage:d.states.initial,round:1,mode,extractionEdge:edge.trim(),objectives:Object.fromEntries(d.objectives.map(o=>[o.id,'UNKNOWN'])),hidden:Object.fromEntries(d.hidden.map(h=>[h.id,mode==='automatic'?d.objectives[Math.min(d.objectives.length-1,Math.max(0,Math.floor(random()*d.objectives.length)))].id:null])),counters:Object.fromEntries(d.counters.map(c=>[c.id,c.initial])),maxima:Object.fromEntries(d.counters.map(c=>[c.id,c.initial])),artifact:{id:d.artifact.id,state:d.artifact.initial,carrier:null,finalCarrier:null},crew:crewNames.map((name,i)=>({id:`${runId}-player-${i}`,name:name.trim(),inPlay:true,spyrer:false,readiness:'READY',remaining:2,history:[],terror:'PENDING',conditionResolved:true})),reserve:clone(d.reserve),queue:[],actors:Object.fromEntries(d.force.map(f=>[f.id,f.kind])),controllers:{},unlocks:{},fired:[],lastEndRound:0,log:[],original};
  if(d.id==='secundus-dead-signal'&&d.version==='1.1.0'){s.npoLoadouts=Object.fromEntries([...d.force,...d.reserve].filter(a=>a.kind==='scum').map(a=>[a.id,generateLoadout(a.behaviour,random)]))}
+ if(d.id==='secundus-dead-signal'&&crewNames.length===6&&crewNames.every((name,i)=>name===playerProfiles[i].name))s.crew.forEach((p,i)=>p.profileId=playerProfiles[i].name);
  note(s,'Mission initialized. Relay contents concealed.');
  return {...b,round:1,phase:'PRIORITY',priority:undefined,opportunity:undefined,groupActivation:undefined,fighters:d.force.map(a=>actorFighter(a,s.npoLoadouts?.[a.id])),scenario:s};
+}
+
+export function applyVanSaarCrew(b:BattleState):BattleState{
+ const out=clone(b),s=out.scenario;
+ if(!s||terminal(s)||s.crew.length!==playerProfiles.length)throw new Error('A live expedition with six player fighters is required.');
+ s.crew=s.crew.map((p,i)=>({...p,name:playerProfiles[i].name,profileId:playerProfiles[i].name,spyrer:false}));
+ note(s,'Supplied six-fighter Van Saar roster assigned; player identities and recorded mission progress retained.');
+ return out;
 }
 export function actorFighter(a:ActorTemplate,loadout?:NpoLoadout):Fighter{return {...createFighter(a.id,a.name,'Malstrain'),behaviour:a.behaviour,weapons:loadout?loadout.weapons.map(w=>({id:`${a.id}-${w.id}`,name:w.name,role:w.role,traits:[],outOfAmmo:false})):[{id:`${a.id}-weapon`,name:a.weaponName??'Player-configured equipment',role:a.role,traits:[],outOfAmmo:false}],notes:'Scenario test actor. Configure from your own rules; no profile is supplied.'}}
 function conditionsMet(s:ScenarioRuntime,conditions:Condition[],d:ScenarioDefinition,end=false){return conditions.every(c=>{
