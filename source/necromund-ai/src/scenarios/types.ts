@@ -23,5 +23,5 @@ export interface ScenarioRuntime {
  objectives:Record<string,'UNKNOWN'|'RESOLVED'|'LIVE'>; hidden:Record<string,string|null>; counters:Record<string,number>; maxima:Record<string,number>;
  artifact:{id:string; state:string; carrier:string|null; finalCarrier:string|null}; crew:PlayerActor[]; activePlayerId?:string;
  reserve:ActorTemplate[]; queue:ActorTemplate[]; actors:Record<string,string>; controllers:Record<string,string>; unlocks:Record<string,number>; fired:string[]; lastEndRound:number;
- recycledProfiles?:Record<string,Fighter>; casualties?:Record<string,number>; log:string[]; result?:ScenarioResult; original:Omit<BattleState,'scenario'>;
+ npoLoadouts?:Record<string,import('./npo-loadouts').NpoLoadout>; recycledProfiles?:Record<string,Fighter>; casualties?:Record<string,number>; log:string[]; result?:ScenarioResult; original:Omit<BattleState,'scenario'>;
 }
