@@ -1,8 +1,8 @@
 {
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "stage": "alpha",
-  "appVersion": "3.3.1",
+  "appVersion": "3.3.2",
   "scenarioVersion": "1.1.0",
-  "release": "Dead Signal Event Play / GitHub candidate",
+  "release": "Dead Signal NPO cards / demo loadouts",
   "releaseDate": "2026-10-15"
 }

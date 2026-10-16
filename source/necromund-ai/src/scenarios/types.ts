@@ -1,6 +1,6 @@
 import type {BattleState, Behaviour, Fighter, Mission} from '../types';
 export type Stage = string;
-export interface PlayerActor {id:string; name:string; inPlay:boolean; spyrer:boolean; readiness:'READY'|'ACTIVATING'|'ACTIVATED'; remaining:number; history:string[]; terror:'PENDING'|'CLEAR'|'FAILED'; conditionResolved:boolean}
+export interface PlayerActor {profileId?:string; id:string; name:string; inPlay:boolean; spyrer:boolean; readiness:'READY'|'ACTIVATING'|'ACTIVATED'; remaining:number; history:string[]; terror:'PENDING'|'CLEAR'|'FAILED'; conditionResolved:boolean}
 export interface ActorTemplate {id:string; name:string; kind:string; behaviour:Behaviour; weaponName?:string; role:Fighter['weapons'][number]['role']; unlock?:string; requiresController?:string}
 export interface Directive {mission:string; coreMission:Mission; priority:string[]; movement:string}
 export type Condition = {kind:'artifact'; state:string} | {kind:'roundLimit'} | {kind:'noPlayers'} | {kind:'searchedAll'} | {kind:'playersAtLeast'; count:number};
@@ -23,5 +23,5 @@ export interface ScenarioRuntime {
  objectives:Record<string,'UNKNOWN'|'RESOLVED'|'LIVE'>; hidden:Record<string,string|null>; counters:Record<string,number>; maxima:Record<string,number>;
  artifact:{id:string; state:string; carrier:string|null; finalCarrier:string|null}; crew:PlayerActor[]; activePlayerId?:string;
  reserve:ActorTemplate[]; queue:ActorTemplate[]; actors:Record<string,string>; controllers:Record<string,string>; unlocks:Record<string,number>; fired:string[]; lastEndRound:number;
- recycledProfiles?:Record<string,Fighter>; casualties?:Record<string,number>; log:string[]; result?:ScenarioResult; original:Omit<BattleState,'scenario'>;
+ npoLoadouts?:Record<string,import('./npo-loadouts').NpoLoadout>; recycledProfiles?:Record<string,Fighter>; casualties?:Record<string,number>; log:string[]; result?:ScenarioResult; original:Omit<BattleState,'scenario'>;
 }

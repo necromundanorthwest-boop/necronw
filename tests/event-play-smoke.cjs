@@ -15,6 +15,19 @@ let server;
   await page.goto(event);await page.getByRole('button',{name:'Initialize Dead Signal',exact:true}).waitFor();assert.match(page.url(),/event=1/);
   await page.getByRole('button',{name:'Initialize Dead Signal',exact:true}).click();
   const initial=await saved();assert.equal(initial.fighters.length,4);assert.equal(initial.scenario.reserve.length,4);assert.equal(Object.keys(initial.scenario.objectives).length,2);
+  assert.equal(Object.keys(initial.scenario.npoLoadouts).length,6);
+  assert.deepEqual(initial.scenario.crew.map(p=>p.name),['Prime','Archeotek','Augmek','Bioteknist','Gunntek','Teknomat']);
+  assert.deepEqual(initial.scenario.crew.map(p=>p.profileId),initial.scenario.crew.map(p=>p.name));
+  await page.getByText('Player crew — Van Saar reference cards',{exact:true}).click();
+  await page.locator('.player-reference .npo-card summary').first().click();
+  assert.match(await page.locator('.player-reference').innerText(),/Combi-laspistol/);
+  assert.deepEqual(await saved(),initial);
+
+  await page.getByText('NPO reference cards — deployed and reserves',{exact:true}).click();
+  await page.locator('.npo-reference .npo-card summary').first().click();
+  assert.match(await page.locator('.npo-reference').innerText(),/Demo house prices/);
+  assert.deepEqual(await saved(),initial);
+  for(const width of [390,768,1280]){await page.setViewportSize({width,height:1024});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'card overflow at '+width)}
   await page.getByRole('button',{name:'Opponent',exact:true}).click();
   await page.getByLabel('Ready player fighter').selectOption(initial.scenario.crew[0].id);
   const mid=await saved();await page.getByRole('button',{name:'Hand off this table',exact:true}).click();assert.deepEqual(await saved(),mid);
