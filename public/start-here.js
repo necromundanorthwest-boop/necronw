@@ -1,6 +1,6 @@
 // Shared by the homepage and the permanent #/start-here page.
 // Keep the invitation in one place for every NecroNW community link.
-export const DISCORD_URL = 'https://discord.gg/qf9KP3KVk';
+export const DISCORD_URL = 'https://discord.gg/gSMrZcRdy';
 
 export function startHere({page = false} = {}) {
   const titleTag = page ? 'h1' : 'h2';
